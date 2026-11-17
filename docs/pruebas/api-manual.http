@@ -1,0 +1,129 @@
+### Pruebas manuales de la API · Plataforma Digital Conatacoch
+### Se abre con la extensión "REST Client" de VS Code (o se copian a Postman / Thunder Client).
+### Requiere el servidor corriendo: npm start
+
+@base = http://localhost:3000/api
+@clave = Colectivo2026
+
+### 1. Estado del servicio (no requiere sesión)
+GET {{base}}/salud
+
+### 2. Inicio de sesión del pasajero  ->  copia access_token en @pasajero
+# @name loginPasajero
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "pasajero@demo.cl", "contrasena": "{{clave}}" }
+
+###
+@pasajero = {{loginPasajero.response.body.access_token}}
+
+### 3. Inicio de sesión del conductor
+# @name loginConductor
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "conductor@demo.cl", "contrasena": "{{clave}}" }
+
+###
+@conductor = {{loginConductor.response.body.access_token}}
+
+### 4. CASO NEGATIVO: contraseña incorrecta  ->  espera 401 con mensaje genérico
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "pasajero@demo.cl", "contrasena": "equivocada-123" }
+
+### 5. CASO NEGATIVO: sin token  ->  espera 401
+GET {{base}}/trazados
+
+### 6. Trazados visibles para el pasajero
+GET {{base}}/trazados
+Authorization: Bearer {{pasajero}}
+
+### 7. Flota en vivo del trazado 1 con llegada estimada al paradero 1
+GET {{base}}/trazados/1/flota?paradero_id=1
+Authorization: Bearer {{pasajero}}
+
+### 8. El conductor inicia su turno  ->  espera 201
+POST {{base}}/turno/iniciar
+Authorization: Bearer {{conductor}}
+Content-Type: application/json
+
+{}
+
+### 9. El conductor informa 2 asientos libres  ->  espera 200
+PUT {{base}}/turno/cupos
+Authorization: Bearer {{conductor}}
+Content-Type: application/json
+
+{ "cupos": 2 }
+
+### 10. CASO NEGATIVO: cupos sobre la capacidad  ->  espera 400
+PUT {{base}}/turno/cupos
+Authorization: Bearer {{conductor}}
+Content-Type: application/json
+
+{ "cupos": 9 }
+
+### 11. CASO NEGATIVO (OWASP A01): un pasajero intenta cambiar cupos  ->  espera 403
+PUT {{base}}/turno/cupos
+Authorization: Bearer {{pasajero}}
+Content-Type: application/json
+
+{ "cupos": 0 }
+
+### 12. Geocerca: ¿el pasajero está sobre el trazado?  (centro de Santiago => fuera)
+POST {{base}}/trazados/1/ubicar
+Authorization: Bearer {{pasajero}}
+Content-Type: application/json
+
+{ "lat": -33.45, "lng": -70.66 }
+
+### 13. Saldo del pasajero ANTES del pago
+GET {{base}}/billetera
+Authorization: Bearer {{pasajero}}
+
+### 14. Pago del pasaje al vehículo 1 (el del conductor de demostración)  ->  espera 201
+POST {{base}}/pagos
+Authorization: Bearer {{pasajero}}
+Content-Type: application/json
+
+{ "vehiculo_id": 1, "codigo": "11111111-2222-4333-8444-555555555555" }
+
+### 15. Repetir EXACTAMENTE el mismo pago  ->  espera 200 y "repetido": true (no cobra dos veces)
+POST {{base}}/pagos
+Authorization: Bearer {{pasajero}}
+Content-Type: application/json
+
+{ "vehiculo_id": 1, "codigo": "11111111-2222-4333-8444-555555555555" }
+
+### 16. Saldo del pasajero DESPUÉS: bajó una sola tarifa
+GET {{base}}/billetera
+Authorization: Bearer {{pasajero}}
+
+### 17. Recaudación del conductor: subió la misma tarifa
+GET {{base}}/turno/recaudacion
+Authorization: Bearer {{conductor}}
+
+### 18. CASO NEGATIVO: intento de inyección SQL en el identificador  ->  espera 400
+GET {{base}}/trazados/1;DROP TABLE usuarios
+Authorization: Bearer {{pasajero}}
+
+### 19. CASO NEGATIVO: un pasajero intenta entrar al panel del sindicato  ->  espera 403
+GET {{base}}/sindicato/conductores
+Authorization: Bearer {{pasajero}}
+
+### 20. El conductor termina su turno  ->  deja de aparecer en la flota
+POST {{base}}/turno/finalizar
+Authorization: Bearer {{conductor}}
+Content-Type: application/json
+
+{}
+
+### 21. CASO NEGATIVO (privacidad): fuera de turno no se aceptan ubicaciones  ->  espera 409
+POST {{base}}/turno/ubicacion
+Authorization: Bearer {{conductor}}
+Content-Type: application/json
+
+{ "lat": -33.6098, "lng": -70.5757 }

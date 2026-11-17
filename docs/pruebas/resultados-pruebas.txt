@@ -1,0 +1,301 @@
+▶ Registro de pasajeros
+  ✔ crea la cuenta, entrega token y deja el refresh en cookie httpOnly + SameSite=Strict (47.0435ms)
+  ✔ la contraseña se guarda con bcrypt, nunca en texto plano (0.2177ms)
+  ✔ al registrarse el pasajero recibe su billetera en $0 (0.1113ms)
+  ✔ rechaza un correo ya registrado (409) (5.7771ms)
+  ✔ rechaza contraseñas débiles y explica por qué (400) (3.665ms)
+  ✔ nadie puede registrarse a sí mismo como administrador (campo desconocido => 400) (3.2062ms)
+✔ Registro de pasajeros (91.3309ms)
+▶ Inicio de sesión
+  ✔ credenciales correctas entregan un token que permite consultar el perfil (10.6002ms)
+  ✔ contraseña incorrecta y correo inexistente responden igual (no revela qué cuentas existen) (9.5204ms)
+  ✔ intento de inyección SQL en el correo se rechaza por formato (400) y no rompe nada (3.4534ms)
+  ✔ el intento fallido queda en la auditoría, sin la contraseña (0.7997ms)
+✔ Inicio de sesión (24.6072ms)
+▶ Protección de rutas
+  ✔ sin token => 401 (6.9652ms)
+  ✔ token manipulado, vencido o firmado con otra clave => 401 (13.3641ms)
+  ✔ un pasajero NO puede modificar los cupos de un colectivo => 403 (OWASP A01) (8.5622ms)
+  ✔ pasajero y conductor no entran al panel del sindicato => 403 (25.5732ms)
+  ✔ un conductor no puede pagar ni recargar; el sindicato no tiene billetera => 403 (22.1691ms)
+  ✔ cada acceso denegado queda registrado en la auditoría (0.3288ms)
+✔ Protección de rutas (77.2136ms)
+▶ Segundo factor del administrador (MFA)
+  ✔ con solo la contraseña NO se obtiene acceso (7.4231ms)
+  ✔ un código incorrecto se rechaza y el correcto abre la sesión (12.2116ms)
+  ✔ el secreto del segundo factor está cifrado en la base (0.3272ms)
+✔ Segundo factor del administrador (MFA) (20.1074ms)
+▶ Renovación y cierre de sesión (refresh token)
+  ✔ el refresh token rota: entrega un token nuevo y el anterior deja de servir (12.5594ms)
+  ✔ el refresh token se guarda como hash, no en claro (4.059ms)
+  ✔ margen de gracia: dos pestañas que renuevan a la vez no se cierran la sesión entre sí (9.5994ms)
+  ✔ sin cookie no hay renovación (4.4422ms)
+  ✔ cerrar sesión revoca el refresh token en el servidor (9.1458ms)
+✔ Renovación y cierre de sesión (refresh token) (40.0897ms)
+▶ Límite de intentos (fuerza bruta)
+  ✔ al sexto intento fallido en un minuto la cuenta queda bloqueada temporalmente (429) (20.4614ms)
+  ✔ el bloqueo es por cuenta: otro usuario puede seguir entrando (4.0577ms)
+✔ Límite de intentos (fuerza bruta) (24.6619ms)
+▶ Cuenta suspendida
+  ✔ pierde el acceso de inmediato aunque su token no haya expirado (12.8028ms)
+✔ Cuenta suspendida (12.9077ms)
+▶ Trazados visibles para el pasajero
+  ✔ lista los trazados activos con su tarifa (5.1922ms)
+  ✔ entrega la polilínea y los paraderos ordenados por avance (4.3169ms)
+  ✔ un trazado inexistente responde 404 y un id no numérico 400 (7.0459ms)
+✔ Trazados visibles para el pasajero (96.264ms)
+▶ Turno y cupos del conductor (HU-02)
+  ✔ fuera de turno el vehículo no aparece en el mapa ni puede informar cupos (7.5751ms)
+  ✔ al iniciar turno aparece en el mapa con todos sus asientos libres (6.712ms)
+  ✔ lo que ve el pasajero no incluye datos personales del conductor (2.9782ms)
+  ✔ no se puede abrir un segundo turno (409) (2.9458ms)
+  ✔ la base impide dos turnos abiertos para el mismo vehículo aunque el código fallara (0.5996ms)
+  ✔ con un toque informa los cupos y el pasajero lo ve de inmediato (19.7183ms)
+  ✔ rechaza cupos fuera de rango, decimales, texto y campos desconocidos (400) (18.0461ms)
+  ✔ cada cambio queda como documento de telemetría en la base NoSQL (GeoJSON) (0.9449ms)
+✔ Turno y cupos del conductor (HU-02) (59.8819ms)
+▶ Llegada estimada al paradero (HU-01)
+  ✔ con un paradero, cada colectivo trae distancia y minutos, ordenados por cercanía (3.0724ms)
+  ✔ un paradero de otro trazado se rechaza (404) (2.688ms)
+✔ Llegada estimada al paradero (HU-01) (5.8993ms)
+▶ Geocerca del pasajero (HU-01, criterio 4)
+  ✔ sobre el trazado: confirma y sugiere el paradero más cercano (3.3324ms)
+  ✔ lejos del trazado: avisa la distancia y hacia dónde caminar (2.4869ms)
+  ✔ coordenadas imposibles se rechazan (400) (5.2294ms)
+✔ Geocerca del pasajero (HU-01, criterio 4) (11.2533ms)
+▶ Avisos de parada
+  ✔ el pasajero avisa y el conductor con asientos lo ve (5.8863ms)
+  ✔ avisar dos veces no duplica: queda un solo aviso vigente por pasajero (4.6167ms)
+  ✔ un colectivo LLENO no recibe avisos (HU-02, criterio 2) (8.6549ms)
+  ✔ un conductor no ve avisos de un trazado donde no está en turno (403) (3.0518ms)
+✔ Avisos de parada (22.4237ms)
+▶ GPS real del teléfono: anti-fraude y geocerca del vehículo
+  ✔ una posición sobre el trazado se acepta (6.1638ms)
+  ✔ un salto imposible (GPS falso) se rechaza y queda en la auditoría (8.0792ms)
+✔ GPS real del teléfono: anti-fraude y geocerca del vehículo (14.4186ms)
+▶ Fin de turno: desconexión ética del rastreo
+  ✔ al terminar desaparece del mapa de inmediato (5.328ms)
+  ✔ fuera de turno el servidor se niega a recibir ubicaciones (409) (2.9987ms)
+  ✔ el turno queda cerrado con hora de término (0.3293ms)
+✔ Fin de turno: desconexión ética del rastreo (8.7941ms)
+▶ Solo operan conductores y vehículos validados (REQ-F01)
+  ✔ un conductor por validar no puede iniciar turno (9.0174ms)
+✔ Solo operan conductores y vehículos validados (REQ-F01) (9.1174ms)
+▶ Billetera
+  ✔ muestra saldo y movimientos del propio usuario (5.7337ms)
+  ✔ la recarga suma al saldo y deja un movimiento (5.175ms)
+  ✔ rechaza montos inválidos: negativos, cero, decimales, enormes o texto (19.1999ms)
+✔ Billetera (111.8739ms)
+▶ Pago del pasaje
+  ✔ no se puede pagar a un colectivo que no está en recorrido (409) y nada cambia (5.8831ms)
+  ✔ pago correcto: descuenta al pasajero, abona al conductor y registra todo (caso del plan de pruebas) (7.1971ms)
+  ✔ la respuesta al pasajero no revela el identificador interno del conductor (2.8743ms)
+  ✔ idempotencia: reintentar el mismo pago NO cobra dos veces (4.978ms)
+  ✔ saldo insuficiente (402): la transacción se revierte completa (atomicidad) (3.7203ms)
+  ✔ pagos simultáneos con saldo para uno solo: se cobra exactamente uno (8.9411ms)
+  ✔ vehículo inexistente (404) y datos mal formados (400) (11.9102ms)
+  ✔ el conductor ve su recaudación del día (2.898ms)
+  ✔ cada quien ve solo sus pagos; el sindicato los ve todos (22.4788ms)
+✔ Pago del pasaje (71.3309ms)
+▶ Integridad garantizada por la base de datos (aunque el código fallara)
+  ✔ un saldo nunca puede quedar negativo (CHECK) (0.5907ms)
+  ✔ no existe un pago sin pasajero, vehículo o turno reales (claves foráneas) (0.1933ms)
+  ✔ un pago no puede tener monto cero o negativo ni repetir su código (0.2154ms)
+  ✔ no se puede borrar un usuario que tiene pagos (RESTRICT) (0.1936ms)
+✔ Integridad garantizada por la base de datos (aunque el código fallara) (1.3489ms)
+▶ Cabeceras de seguridad y archivos de la interfaz
+  ✔ la página principal se sirve con una política de contenido estricta (CSP) (25.5444ms)
+  ✔ envía las cabeceras defensivas y oculta la tecnología del servidor (7.5355ms)
+  ✔ la interfaz no usa estilos ni scripts en línea (compatible con la CSP) (3.6622ms)
+  ✔ sirve la guía de estilo (tokens), la fuente y el mapa desde el propio servidor (12.0291ms)
+  ✔ no expone archivos internos del servidor (13.8447ms)
+✔ Cabeceras de seguridad y archivos de la interfaz (92.719ms)
+▶ Manejo de errores de la API
+  ✔ las respuestas con datos no se guardan en caché (3.6801ms)
+  ✔ JSON mal formado => 400 con mensaje claro, sin detalles internos (15.3311ms)
+  ✔ cuerpo demasiado grande => 413 (4.395ms)
+  ✔ ruta inexistente => 404 en JSON (12.1413ms)
+✔ Manejo de errores de la API (35.7974ms)
+▶ Canal en tiempo real (WebSocket)
+  ✔ sin autenticarse no se entrega información de la flota (4.5816ms)
+  ✔ un token inválido cierra la conexión con código 4401 (2.717ms)
+  ✔ al suscribirse recibe la flota actual del trazado (1.9964ms)
+      latencia conductor → pasajero: 3.2 ms
+  ✔ un cambio de cupos llega al pasajero en menos de 3 segundos (REQ-NF01) (5.1356ms)
+  ✔ quien mira otro trazado no recibe los cambios de este (405.4576ms)
+  ✔ el conductor recibe en vivo el aviso de un pasajero que espera y el pago recibido (15.1185ms)
+  ✔ al terminar el turno el vehículo sale del mapa de todos los pasajeros (5.4852ms)
+  ✔ rechaza mensajes que no son JSON o demasiado grandes sin caerse (4.9211ms)
+✔ Canal en tiempo real (WebSocket) (459.8003ms)
+▶ Flota de demostración y simulador GPS
+  ✔ pone en recorrido a los 7 colectivos de demostración, repartidos en sus trazados (3.1405ms)
+  ✔ cada paso mueve a los vehículos y nunca los saca de su trazado (polilínea estricta) (273.2795ms)
+  ✔ cada posición queda guardada como telemetría con su turno y sus cupos (1.152ms)
+  ✔ las posiciones antiguas se borran solas al cumplir su plazo de retención (privacidad) (1.0394ms)
+  ✔ el pasajero ve la flota simulada con asientos entre 0 y la capacidad (52.79ms)
+  ✔ tras un reinicio del servidor, los turnos abiertos vuelven al mapa (continuidad) (0.6688ms)
+✔ Flota de demostración y simulador GPS (363.2079ms)
+▶ Conductores
+  ✔ lista conductores con su vehículo y estado (5.594ms)
+  ✔ rechaza un RUT con dígito verificador incorrecto (400) (6.8123ms)
+  ✔ registra un conductor: queda "por validar" y con clave temporal de un solo uso (10.2143ms)
+  ✔ el RUT se guarda cifrado (AES-256) y con índice ciego: no aparece en claro en la base (0.4246ms)
+  ✔ no permite dos personas con el mismo RUT ni el mismo correo (409) (8.9546ms)
+  ✔ edita datos del conductor (4.3671ms)
+  ✔ valida al conductor (pendiente → activo) y queda en la auditoría (4.332ms)
+  ✔ rechaza estados inventados (400) y conductores inexistentes (404) (5.4324ms)
+  ✔ un conductor sin historial se puede eliminar; uno con turnos solo se suspende (409) (4.8486ms)
+✔ Conductores (139.502ms)
+▶ Vehículos
+  ✔ rechaza patentes mal formadas y datos fuera de rango (400) (16.9532ms)
+  ✔ registra el vehículo normalizando la patente; queda "por validar" (3.2557ms)
+  ✔ no permite patente repetida, ni un conductor con dos vehículos, ni referencias inexistentes (8.5634ms)
+  ✔ mientras el vehículo no esté validado, su conductor no puede iniciar turno (6.3924ms)
+  ✔ al validarlo puede operar; al suspenderlo sale del mapa y su turno se cierra (17.8466ms)
+  ✔ suspender a un conductor cierra sus sesiones y le quita el acceso al instante (10.1126ms)
+  ✔ edita un vehículo y lista la flota (4.7065ms)
+✔ Vehículos (74.9363ms)
+▶ Trazados
+  ✔ crea un trazado: calcula el largo y ordena los paraderos por avance (5.2744ms)
+  ✔ valida código, tarifa, color y geometría (400) (16.0854ms)
+  ✔ no permite códigos repetidos (409) (3.4162ms)
+  ✔ cambiar la tarifa no altera el recorrido; un trazado inactivo se oculta al pasajero (11.0211ms)
+  ✔ un trazado sin vehículos se elimina (con sus puntos y paraderos en cascada) (2.405ms)
+  ✔ un trazado con vehículos NO se puede eliminar (integridad referencial, 409) (3.2794ms)
+✔ Trazados (41.8403ms)
+▶ Resumen, opiniones y auditoría
+  ✔ el resumen entrega los indicadores del sindicato (3.8535ms)
+  ✔ cualquier usuario puede opinar; se guarda como documento flexible en NoSQL (4.0138ms)
+  ✔ valida la opinión: tipo conocido, puntaje 1 a 5 y largo del comentario (11.6768ms)
+  ✔ un texto con HTML se guarda como texto y la API lo devuelve como JSON (sin ejecutarse) (5.231ms)
+  ✔ el sindicato gestiona la opinión y registra la mejora aplicada (5.701ms)
+  ✔ intento de inyección NoSQL en el identificador se rechaza (400) (4.5399ms)
+  ✔ la auditoría muestra las acciones recientes y nunca contraseñas ni RUT completos (5.1361ms)
+✔ Resumen, opiniones y auditoría (40.4656ms)
+▶ Distancias
+  ✔ Haversine: 0,009° de latitud son cerca de 1 km (0.6337ms)
+  ✔ la distancia de un punto a sí mismo es 0 (0.1288ms)
+  ✔ el largo de la polilínea suma sus tramos (0.0959ms)
+  ✔ rumbo: hacia el norte es 0° y hacia el este 90° (0.1091ms)
+✔ Distancias (1.7724ms)
+▶ Posición sobre el trazado
+  ✔ punto a mitad de camino (0.2221ms)
+  ✔ se limita a los extremos del trazado (0.7188ms)
+  ✔ una polilínea vacía es un error (0.2069ms)
+✔ Posición sobre el trazado (1.293ms)
+▶ Geocerca (proyección sobre el trazado)
+  ✔ un punto sobre la ruta está a ~0 m y conoce su avance (0.252ms)
+  ✔ un punto a ~470 m al este queda fuera de una geocerca de 200 m (0.1093ms)
+  ✔ más allá del final, el punto más cercano es el último vértice (0.0993ms)
+✔ Geocerca (proyección sobre el trazado) (0.5625ms)
+▶ Llegada al paradero (ida y vuelta)
+  ✔ de ida y el paradero está adelante (0.132ms)
+  ✔ de ida y ya lo pasó: llega al final y vuelve (0.0594ms)
+  ✔ de vuelta y el paradero está adelante (0.0355ms)
+  ✔ de vuelta y ya lo pasó: llega al inicio y regresa (0.0431ms)
+  ✔ si está en el paradero la distancia es 0 (0.0334ms)
+  ✔ tiempo estimado: 2,5 km a 25 km/h son 6 minutos; mínimo 1 (0.0604ms)
+✔ Llegada al paradero (ida y vuelta) (0.4828ms)
+▶ Simulador GPS
+  ✔ avanza en su sentido (0.1478ms)
+  ✔ al llegar al final del trazado da la vuelta (0.0654ms)
+  ✔ al llegar al inicio retoma la ida (0.0426ms)
+  ✔ nunca sale del trazado (0.1991ms)
+✔ Simulador GPS (0.5331ms)
+▶ RUT chileno (módulo 11)
+  ✔ acepta RUT válidos con y sin puntos ni guion (0.8915ms)
+  ✔ acepta dígito verificador K (mayúscula o minúscula) y 0 (0.1047ms)
+  ✔ rechaza dígito verificador incorrecto (0.0994ms)
+  ✔ rechaza formatos inválidos, vacíos e intentos de inyección (0.1107ms)
+  ✔ normaliza, formatea y enmascara (0.167ms)
+✔ RUT chileno (módulo 11) (2.1762ms)
+▶ Patentes chilenas
+  ✔ acepta formato actual (4 letras + 2 números) y antiguo (2 letras + 4 números) (0.1958ms)
+  ✔ rechaza letras no usadas en el formato actual, largos incorrectos y símbolos (0.1103ms)
+  ✔ normaliza y formatea como se lee en la placa (0.0919ms)
+✔ Patentes chilenas (0.4957ms)
+▶ Cupos del colectivo
+  ✔ caso del plan de pruebas: capacidad 4, suben 2, quedan 2 (0.118ms)
+  ✔ no puede subir más gente que asientos libres (1.0744ms)
+  ✔ al bajar pasajeros nunca se supera la capacidad (0.1347ms)
+  ✔ valida el rango 0..capacidad y que sea entero (0.1592ms)
+  ✔ estado visible para el pasajero: lleno, último asiento o disponible (0.0683ms)
+  ✔ un vehículo lleno no recibe avisos de pasajeros (HU-02) (0.0496ms)
+  ✔ ocupación de la flota en porcentaje (0.1118ms)
+✔ Cupos del colectivo (1.93ms)
+▶ Cifrado AES-256-GCM de datos personales
+  ✔ lo que se cifra se puede descifrar (1.3388ms)
+  ✔ el texto cifrado no contiene el dato original y cambia en cada cifrado (IV aleatorio) (0.2749ms)
+  ✔ detecta manipulación del dato cifrado (integridad GCM) (0.3268ms)
+  ✔ rechaza formatos desconocidos (0.1033ms)
+  ✔ índice ciego: determinístico, no reversible a simple vista y distinto por dato (0.6228ms)
+  ✔ comparación en tiempo constante y tokens aleatorios (0.1821ms)
+✔ Cifrado AES-256-GCM de datos personales (3.7924ms)
+▶ Segundo factor TOTP (RFC 6238 / RFC 4226)
+  ✔ Base32 codifica y decodifica (0.2525ms)
+  ✔ coincide con los vectores de prueba del estándar (0.255ms)
+  ✔ HOTP coincide con el RFC 4226 (contador 0 y 1) (0.1891ms)
+  ✔ acepta el código vigente y el del intervalo vecino; rechaza los demás (0.3818ms)
+  ✔ rechaza códigos mal formados (0.1067ms)
+  ✔ genera secretos distintos y una URI estándar para la app autenticadora (0.2324ms)
+✔ Segundo factor TOTP (RFC 6238 / RFC 4226) (1.6424ms)
+▶ Tokens de sesión (JWT)
+  ✔ un token de acceso válido entrega id y rol (2.8716ms)
+  ✔ expira a los 15 minutos (política de la Evaluación 2) (0.4134ms)
+  ✔ no lleva datos sensibles en su contenido (0.8876ms)
+  ✔ rechaza un token firmado con otra clave (0.5967ms)
+  ✔ rechaza un token sin firma (ataque "alg: none") (0.162ms)
+  ✔ rechaza un token al que se le cambió el rol (0.4144ms)
+  ✔ rechaza un token vencido (0.4399ms)
+  ✔ un token de verificación (MFA) no sirve como token de acceso (0.5503ms)
+✔ Tokens de sesión (JWT) (6.5778ms)
+ℹ tests 176
+ℹ suites 37
+ℹ pass 176
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6441.5494
+ℹ start of coverage report
+ℹ --------------------------------------------------------------------------
+ℹ file            | line % | branch % | funcs % | uncovered lines
+ℹ --------------------------------------------------------------------------
+ℹ src             |        |          |         | 
+ℹ  app.js         | 100.00 |    83.33 |  100.00 | 
+ℹ  config.js      |  83.84 |    62.50 |  100.00 | 16-30 50
+ℹ  db             |        |          |         | 
+ℹ   nosql.js      |  96.77 |    50.00 |   66.67 | 61-62
+ℹ   seed.js       |  96.61 |    81.82 |  100.00 | 172-177
+ℹ   sql.js        |  96.97 |    53.33 |  100.00 | 16-17
+ℹ  lib            |        |          |         | 
+ℹ   cifrado.js    | 100.00 |    92.86 |  100.00 | 
+ℹ   cupos.js      | 100.00 |    95.83 |  100.00 | 
+ℹ   geo.js        | 100.00 |    90.63 |  100.00 | 
+ℹ   patente.js    | 100.00 |    71.43 |  100.00 | 
+ℹ   rut.js        | 100.00 |    90.00 |  100.00 | 
+ℹ   totp.js       | 100.00 |   100.00 |  100.00 | 
+ℹ  middleware     |        |          |         | 
+ℹ   auth.js       | 100.00 |    86.67 |  100.00 | 
+ℹ   errores.js    |  91.89 |    91.67 |  100.00 | 34-36
+ℹ   limites.js    | 100.00 |   100.00 |  100.00 | 
+ℹ   validar.js    | 100.00 |    93.75 |  100.00 | 
+ℹ  routes         |        |          |         | 
+ℹ   auth.js       |  97.33 |    90.48 |  100.00 | 127-130
+ℹ   operacion.js  | 100.00 |    96.00 |  100.00 | 
+ℹ   sindicato.js  |  94.61 |    87.27 |   92.00 | 62-64 118 152-153 177-183
+ℹ   trazados.js   | 100.00 |    94.74 |   94.44 | 
+ℹ  services       |        |          |         | 
+ℹ   auditoria.js  |  96.30 |    85.71 |   75.00 | 20
+ℹ   flota.js      |  99.41 |    68.97 |   92.86 | 61
+ℹ   pagos.js      | 100.00 |    92.59 |  100.00 | 
+ℹ   sesiones.js   |  97.94 |    90.91 |   88.89 | 96-97
+ℹ   simulador.js  |  83.33 |    78.26 |   87.50 | 66-67 80-91 97-99
+ℹ   tiempoReal.js |  95.45 |    89.47 |   86.36 | 71-75
+ℹ   trazados.js   |  91.67 |    78.38 |  100.00 | 76-77 84-88 101-102
+ℹ   turnos.js     |  96.55 |    80.65 |   90.00 | 113-116
+ℹ   usuarios.js   |  96.55 |    82.86 |  100.00 | 111-114
+ℹ --------------------------------------------------------------------------
+ℹ all files       |  96.63 |    85.81 |   95.16 | 
+ℹ --------------------------------------------------------------------------
+ℹ end of coverage report

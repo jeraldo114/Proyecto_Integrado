@@ -1,0 +1,53 @@
+
+Acceso y seguridad
+  ✔ La pantalla de acceso carga
+  ✔ Una contraseña incorrecta muestra un mensaje claro y no entra
+
+Conductor (teléfono, tema oscuro)
+  ✔ El conductor entra a "Mi turno"
+  ✔ La vista del conductor usa el tema oscuro
+  ✔ Los botones de cupos son gigantes (mínimo 96 px de alto) (121 px)
+
+Pasajero (escritorio)
+  ✔ El pasajero ve el mapa con colectivos en vivo
+  ✔ El colectivo del conductor aparece con "2 asientos" (HU-01 / HU-02)
+  ✔ Un cambio de cupos llega a la pantalla del pasajero en menos de 3 s (25 ms)
+  ✔ El pasajero paga el pasaje desde su billetera
+  ✔ El conductor recibe el aviso del pago al instante
+  ✔ El pasajero avisa que espera en su paradero
+  ✔ El conductor ve "Pasajeros esperando" con el paradero
+  ✔ Al marcar LLENO el conductor deja de recibir avisos (HU-02)
+  ✔ Un colectivo lleno sale de la lista y queda en gris en el mapa (HU-01)
+  ✔ Sin señal, el cambio de cupos queda guardado en el teléfono y se avisa al conductor
+  ✔ Al volver la señal el cambio se envía solo
+  ✔ El pasajero ve el dato que se había guardado sin señal
+  ✔ Fuera del trazado, la app indica la distancia y hacia dónde caminar (HU-01)
+  ✔ La billetera muestra saldo y movimientos
+  ✔ La recarga (simulada) actualiza el saldo
+  ✔ Un pasajero que intenta abrir el panel del sindicato vuelve a su mapa
+  ✔ El conductor ve su recaudación del día
+
+Adaptabilidad (teléfono y tablet)
+  ✔ Teléfono (390 px): el mapa del pasajero no se desborda a lo ancho
+  ✔ Tablet (820 px): el mapa del pasajero no se desborda a lo ancho
+  ✔ Tablet en el tablero del auto: los botones de cupos siguen ocupando la pantalla
+
+Sindicato (administrador con verificación en dos pasos)
+  ✔ La contraseña sola no basta: se pide un segundo código
+  ✔ Un código incorrecto se rechaza
+  ✔ Con el código correcto entra al resumen
+  ✔ El sindicato abre "conductores"
+  ✔ El sindicato abre "vehiculos"
+  ✔ El sindicato abre "trazados"
+  ✔ El sindicato abre "opiniones"
+  ✔ El sindicato abre "auditoria"
+  ✔ La auditoría registró el intento fallido y los inicios de sesión
+  ✔ El formulario rechaza un RUT con dígito verificador incorrecto
+  ✔ Teléfono: las tablas del sindicato se convierten en tarjetas sin desbordarse
+
+Fin de turno (privacidad laboral)
+  ✔ El conductor termina su turno
+  ✔ Al terminar el turno el colectivo desaparece del mapa de los pasajeros
+  ✔ Ninguna pantalla produjo errores de JavaScript ni bloqueos de la política de contenido (CSP)
+
+39 de 39 comprobaciones correctas. Capturas en docs/capturas/

@@ -1,0 +1,113 @@
+/* =====================================================================
+   GUÍA DE ESTILO · Plataforma Digital Conatacoch
+   Única fuente de colores, tipografía, espacios y radios. Ninguna pantalla
+   define valores sueltos: todas usan estas variables (consistencia visual).
+   Identidad: negro y amarillo del taxi colectivo chileno.
+   ===================================================================== */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/vendor/inter/inter-latin-wght-normal.woff2') format('woff2-variations');
+}
+
+:root {
+  /* ---- Marca ---- */
+  --amarillo-100: #fff4cc;
+  --amarillo-500: #ffc400;
+  --amarillo-600: #e6a700;
+  --negro: #101214;
+
+  /* ---- Neutros ---- */
+  --gris-50: #f6f7f9;
+  --gris-100: #eef0f3;
+  --gris-200: #d9dde3;
+  --gris-300: #a7afb8;
+  --gris-500: #5a626d;
+  --gris-700: #2b2f35;
+  --gris-800: #1d2024;
+  --gris-900: #15171a;
+  --blanco: #ffffff;
+
+  /* ---- Estados (siempre acompañados de texto o número, nunca solo color) ---- */
+  --verde-100: #dcfce7;
+  --verde-600: #15803d;
+  --ambar-100: #fef3c7;
+  --ambar-600: #b45309;
+  --rojo-100: #fee2e2;
+  --rojo-600: #c81e1e;
+  --azul-100: #dbeafe;
+  --azul-600: #1d4ed8;
+
+  /* ---- Roles semánticos (tema claro: pasajero y sindicato) ---- */
+  --fondo: var(--gris-50);
+  --superficie: var(--blanco);
+  --superficie-2: var(--gris-100);
+  --borde: var(--gris-200);
+  --texto: var(--negro);
+  --texto-suave: var(--gris-500);
+  --primario: var(--amarillo-500);
+  --primario-fuerte: var(--amarillo-600);
+  --sobre-primario: var(--negro);
+  --foco: var(--azul-600);
+  --cupo-libre: var(--verde-600);
+  --cupo-ultimo: var(--ambar-600);
+  --cupo-lleno: var(--gris-500);
+
+  /* ---- Tipografía: Inter. Botones de acción nunca bajo 18 px ---- */
+  --fuente: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --t-xs: 0.8125rem; /* 13 */
+  --t-s: 0.875rem; /* 14 */
+  --t-m: 1rem; /* 16 */
+  --t-l: 1.125rem; /* 18 */
+  --t-xl: 1.5rem; /* 24 */
+  --t-2xl: 2rem; /* 32 */
+  --t-3xl: 3rem; /* 48 */
+
+  /* ---- Espacios (múltiplos de 4) ---- */
+  --e1: 4px;
+  --e2: 8px;
+  --e3: 12px;
+  --e4: 16px;
+  --e5: 24px;
+  --e6: 32px;
+  --e7: 48px;
+
+  /* ---- Forma ---- */
+  --r1: 8px;
+  --r2: 12px;
+  --r3: 20px;
+  --r-pildora: 999px;
+  --sombra-1: 0 1px 2px rgb(16 18 20 / 8%), 0 1px 3px rgb(16 18 20 / 6%);
+  --sombra-2: 0 8px 24px rgb(16 18 20 / 14%);
+
+  /* ---- Medidas táctiles ---- */
+  --toque-minimo: 48px;
+  --ancho-panel: 400px;
+  --alto-barra: 56px;
+  --alto-pestanas: 64px;
+}
+
+/* Tema oscuro permanente de la vista del conductor: alto contraste y sin encandilar de noche. */
+[data-tema='oscuro'] {
+  --fondo: #0b0c0e;
+  --superficie: var(--gris-900);
+  --superficie-2: var(--gris-800);
+  --borde: #353a41;
+  --texto: var(--blanco);
+  --texto-suave: #b9c0c9;
+  --foco: #8ab4ff;
+  --cupo-libre: #4ade80;
+  --cupo-ultimo: #fbbf24;
+  --cupo-lleno: #9aa3ad;
+  --verde-100: #12351f;
+  --verde-600: #4ade80;
+  --ambar-100: #3a2a08;
+  --ambar-600: #fbbf24;
+  --rojo-100: #3d1414;
+  --rojo-600: #ff8080;
+  --azul-100: #14264a;
+  --azul-600: #8ab4ff;
+}

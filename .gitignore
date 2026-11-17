@@ -1,0 +1,14 @@
+# Dependencias
+node_modules/
+
+# Secretos y configuración local (se generan solos en el primer arranque)
+.env
+
+# Bases de datos locales (se crean solas con datos de demostración)
+data/
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+*.log
+.claude/

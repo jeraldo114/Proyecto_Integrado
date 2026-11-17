@@ -1,0 +1,39 @@
+{
+  "name": "conatacoch-plataforma",
+  "version": "1.0.0",
+  "description": "Plataforma Digital Conatacoch: colectivos en vivo, cupos y pago digital (Proyecto Integrado INACAP)",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
+    "seed": "node --disable-warning=ExperimentalWarning src/db/seed.js --reiniciar",
+    "mfa": "node --disable-warning=ExperimentalWarning scripts/codigo-mfa.js",
+    "test": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1 \"tests/unit/*.test.js\" \"tests/integration/*.test.js\"",
+    "test:unit": "node --disable-warning=ExperimentalWarning --test \"tests/unit/*.test.js\"",
+    "test:integracion": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1 \"tests/integration/*.test.js\"",
+    "test:cobertura": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1 --experimental-test-coverage --test-coverage-include=\"src/**\" \"tests/unit/*.test.js\" \"tests/integration/*.test.js\"",
+    "test:rendimiento": "node --disable-warning=ExperimentalWarning tests/rendimiento/carga.js",
+    "test:e2e": "node --disable-warning=ExperimentalWarning tests/e2e/recorrido.js"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@seald-io/nedb": "^4.1.2",
+    "bcryptjs": "^3.0.3",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.4",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "leaflet": "^1.9.4",
+    "ws": "^8.23.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "autocannon": "^9.0.0",
+    "puppeteer-core": "^25.17.0",
+    "supertest": "^7.3.2"
+  }
+}
