@@ -14,10 +14,10 @@ Lo que hace uno, los otros lo ven al instante.
 
 | Integrante | Rol |
 | --- | --- |
-| Matías Jeraldo | Back end |
+| Matías Jeraldo | Developer back end |
+| Eduardo Toro | Developer front end |
+| Gustavo Rojas | Developer de base de datos |
 | Francisco Soto | Scrum Master |
-| Eduardo Toro | Base de datos |
-| Gustavo Rojas | Base de datos |
 
 Sección 102-4A · Docente: Yaleni Gomez Peña · Cliente: Confederación Nacional de Taxis Colectivos (Conatacoch), cuyo representante hace de Product Owner.
 
