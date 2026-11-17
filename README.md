@@ -3,7 +3,7 @@
 Aplicación web que muestra **en vivo dónde viene cada taxi colectivo, cuántos asientos trae y permite pagar sin efectivo**. Tiene tres vistas: pasajero, conductor y sindicato.
 
 Proyecto Integrado · INACAP sede Puente Alto · sección 102-4A
-Equipo: Matías Jeraldo, Francisco Soto y Eduardo Toro · Docente: Yaleni Gomez Peña
+Equipo: Matías Jeraldo, Francisco Soto, Eduardo Toro y Gustavo Rojas · Docente: Yaleni Gomez Peña
 
 ---
 
